@@ -122,71 +122,106 @@ class AboutRegularExpressions < Neo::Koan
 
   # ------------------------------------------------------------------
 
+  # \A
+  # matches beginning of string.
+
   def test_slash_a_anchors_to_the_start_of_the_string
-    assert_equal __, "start end"[/\Astart/]
-    assert_equal __, "start end"[/\Aend/]
+    assert_equal "start", "start end"[/\Astart/]
+    assert_equal nil, "start end"[/\Aend/]
   end
+
+  # \Z
+  # matches end of string. If string ends with a newline, it matches just before newline
 
   def test_slash_z_anchors_to_the_end_of_the_string
-    assert_equal __, "start end"[/end\z/]
-    assert_equal __, "start end"[/start\z/]
+    assert_equal "end", "start end"[/end\z/]
+    assert_equal nil, "start end"[/start\z/]
   end
+
+  # ^ 
+  # matches beginning of line
 
   def test_caret_anchors_to_the_start_of_lines
-    assert_equal __, "num 42\n2 lines"[/^\d+/]
+    assert_equal "2", "num 42\n2 lines"[/^\d+/]
   end
+
+  # $
+  # matches end of line
 
   def test_dollar_sign_anchors_to_the_end_of_lines
-    assert_equal __, "2 lines\nnum 42"[/\d+$/]
+    assert_equal "42", "2 lines\nnum 42"[/\d+$/]
   end
+
+  # \b
+  # matches word boundaries when outside brackets; backspace (0x08) when inside brackets
 
   def test_slash_b_anchors_to_a_word_boundary
-    assert_equal __, "bovine vines"[/\bvine./]
+    assert_equal "vines", "bovine vines"[/\bvine./]
   end
 
   # ------------------------------------------------------------------
+
+  # (?=pat) - Positive lookahead assertion: ensures that the following characters match pat, but doesn't include those characters in the matched text
+  # (?!pat) - Negative lookahead assertion: ensures that the following characters do not match pat, but doesn't include those characters in the matched text
+  # (?<=pat) - Positive lookbehind assertion: ensures that the preceding characters match pat, but doesn't include those characters in the matched text
+  # (?<!pat) - Negative lookbehind assertion: ensures that the preceding characters do not match pat, but doesn't include those characters in the matched text
 
   def test_parentheses_group_contents
-    assert_equal __, "ahahaha"[/(ha)+/]
+    assert_equal "hahaha", "ahahaha"[/(ha)+/]
   end
 
   # ------------------------------------------------------------------
 
+  # 2nd arg is which of the pattern to return
+
   def test_parentheses_also_capture_matched_content_by_number
-    assert_equal __, "Gray, James"[/(\w+), (\w+)/, 1]
-    assert_equal __, "Gray, James"[/(\w+), (\w+)/, 2]
+    assert_equal "Gray", "Gray, James"[/(\w+), (\w+)/, 1]
+    assert_equal "James", "Gray, James"[/(\w+), (\w+)/, 2]
   end
 
   def test_variables_can_also_be_used_to_access_captures
-    assert_equal __, "Name:  Gray, James"[/(\w+), (\w+)/]
-    assert_equal __, $1
-    assert_equal __, $2
+    assert_equal "Gray, James", "Name:  Gray, James"[/(\w+), (\w+)/]
+    assert_equal "Gray", $1
+    assert_equal "James", $2
   end
 
   # ------------------------------------------------------------------
 
+  # |
+  # or
+
   def test_a_vertical_pipe_means_or
     grays = /(James|Dana|Summer) Gray/
-    assert_equal __, "James Gray"[grays]
-    assert_equal __, "Summer Gray"[grays, 1]
-    assert_equal __, "Jim Gray"[grays, 1]
+    assert_equal "James Gray", "James Gray"[grays]
+    assert_equal "Summer", "Summer Gray"[grays, 1]
+    assert_equal nil, "Jim Gray"[grays, 1]
   end
 
   # THINK ABOUT IT:
   #
   # Explain the difference between a character class ([...]) and alternation (|).
+  # I wasn't too sure about this one, so found this on @mlsimpson's github
+  # "A character class matches a range of characters, while an alternation matches specific instances within."
 
   # ------------------------------------------------------------------
 
+  # scan(pattern) → array
+  # scan(pattern) {|match, ...| block } → str
+  # Both forms iterate through str, matching the pattern (which may be a
+  # Regexp or a String). For each match, a result is generated and either added 
+  # to the result array or passed to the block. If the pattern contains no groups,
+  # each individual result consists of the matched string, $&. If the pattern contains 
+  # groups, each individual result is itself an array containing one entry per group.
+
   def test_scan_is_like_find_all
-    assert_equal __, "one two-three".scan(/\w+/)
+    assert_equal ["one", "two", "three"], "one two-three".scan(/\w+/)
   end
 
   def test_sub_is_like_find_and_replace
-    assert_equal __, "one two-three".sub(/(t\w*)/) { $1[0, 1] }
+    assert_equal "one t-three", "one two-three".sub(/(t\w*)/) { $1[0, 1] }
   end
 
   def test_gsub_is_like_find_and_replace_all
-    assert_equal __, "one two-three".gsub(/(t\w*)/) { $1[0, 1] }
+    assert_equal "one t-t", "one two-three".gsub(/(t\w*)/) { $1[0, 1] }
   end
 end
