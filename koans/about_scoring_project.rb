@@ -30,7 +30,78 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # Your goal is to write the score method.
 
 def score(dice)
-  # You need to write this method
+  return 0 if dice.empty?
+
+  # PREPARING DATA
+  ################
+
+  # score to be returned
+  score = 0
+
+  # counters representing the amount of 1's and 5's in array
+  ones  = 0
+  fives = 0
+
+  # iterate through array to check amount of 1's and 5's
+  dice.sort!
+  dice.each do |elem|
+    if elem == 1
+      ones += 1
+    end
+    if elem == 5
+      fives += 1
+    end
+  end
+
+  # check for other triples, store in array for later calculation
+  curr_num = dice[0]
+  counter = 0
+  triples = []
+  dice.each do |elem|
+    if curr_num == elem
+      counter += 1
+      if counter == 3
+        triples << elem
+        counter = 0
+      end
+    end
+    curr_num = elem
+  end
+
+  # get rid of 1's and 5's in triples array
+  triples.delete(1)
+  triples.delete(5)
+
+
+  # START ADDING TO SCORE
+  #######################
+
+  # this needs to be first! check for group of 1's
+  if ones >= 3
+    score += 1000
+    ones -= 3
+  end
+
+  if fives >= 3
+    score += 500
+    fives -= 3
+  end
+
+  # adds 100 to score for each 1 in dice
+  score += 100*ones if ones > 0
+
+  # adds 50 to score for each 5 in dice
+  score += 50*fives if fives > 0
+
+  # add other triples
+  unless triples.empty?
+    triples.each do |elem|
+      score += elem*100
+    end
+  end
+
+  # return final score
+  score
 end
 
 class AboutScoringProject < Neo::Koan
