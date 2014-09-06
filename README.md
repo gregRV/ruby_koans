@@ -4,4 +4,4 @@ Intended for daily Ruby practice. Source of exercises can be found [here](http:/
 
 Date Started: 08/16/14
 
-As of 9/5/14, completed 192/282 exercises. T__T
+As of 9/6/14, completed 208/282 exercises.
