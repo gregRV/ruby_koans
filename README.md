@@ -4,4 +4,4 @@ Intended for daily Ruby practice. Source of exercises can be found [here](http:/
 
 Date Started: 08/16/14
 
-As of 9/6/14, completed 208/282 exercises.
+As of 9/7/14, completed 208/282 exercises. #saddings
